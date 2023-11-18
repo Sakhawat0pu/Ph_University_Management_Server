@@ -31,20 +31,58 @@ const localGuardianSchema = new Schema<LocalGuardian>({
 });
 
 const studentSchema = new Schema<Student>({
-  id: { type: String },
-  name: userNameSchema,
-  gender: ['male', 'female'],
+  id: { type: String, required: true, unique: true },
+  name: { type: userNameSchema, required: [true, 'Name is required'] },
+  gender: {
+    type: String,
+    enum: {
+      values: ['male', 'female'],
+      message:
+        "{VALUE} is not supported. The following values are only supported: 'male', 'female'.",
+    },
+    required: [true, 'gender field is required.'],
+  },
   DOB: { type: String },
-  email: { type: String, required: true },
-  contactNo: { type: String, required: true },
-  emergencyContactNo: { type: String, required: true },
-  bloodGroup: ['A+', 'A-', 'B+', 'B-', 'O+', 'B-', 'AB+', 'AB-'],
-  presentAddress: { type: String, required: true },
-  permanentAddress: { type: String, required: true },
-  guardian: guardianSchema,
-  localGuardian: localGuardianSchema,
+  email: { type: String, required: [true, 'Email is required'], unique: true },
+  contactNo: { type: String, required: [true, 'Contact number is required'] },
+  emergencyContactNo: {
+    type: String,
+    required: [true, 'Emergency contact number is required'],
+  },
+  bloodGroup: {
+    type: String,
+    enum: {
+      values: ['A+', 'A-', 'B+', 'B-', 'O+', 'B-', 'AB+', 'AB-'],
+      message: '{VALUE} is not supported.',
+    },
+  },
+  presentAddress: {
+    type: String,
+    required: [true, 'Present address is required'],
+  },
+  permanentAddress: {
+    type: String,
+    required: [true, 'Permanent address is required'],
+  },
+  guardian: {
+    type: guardianSchema,
+    required: [true, 'Guardian field is required'],
+  },
+  localGuardian: {
+    type: localGuardianSchema,
+    required: [true, 'Local Guardian field is required'],
+  },
   profileImg: { type: String },
-  isActive: ['active', 'inactive'],
+  isActive: {
+    type: String,
+    enum: {
+      values: ['active', 'inactive'],
+      message:
+        "{VALUE} is not Supported. The following values are only supported: 'active','inActive'.",
+    },
+    default: 'active',
+    required: [true, 'isActive field is required'],
+  },
 });
 
 // Create Model
