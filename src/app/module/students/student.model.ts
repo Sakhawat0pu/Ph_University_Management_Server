@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import validator from 'validator';
 import {
   Guardian,
   LocalGuardian,
@@ -8,31 +9,96 @@ import {
 
 // Create Schema
 
-const userNameSchema = new Schema<UserName>({
-  firstName: { type: String, required: true },
-  middleName: { type: String },
-  lastName: { type: String, required: true },
+const nameSchema = new Schema<UserName>({
+  firstName: {
+    type: String,
+    required: [true, 'First name is required'],
+    trim: true, // trims white space from the front and end of a string
+    maxlength: [20, "First name can't be longer than 20 characters"],
+    validate: {
+      // custom validation
+      validator: function (fName: string) {
+        const capitalizedName =
+          fName.charAt(0).toUpperCase() + fName.slice(1).toLowerCase();
+        return fName === capitalizedName;
+      },
+      message: '{VALUE} is not in capitalized format',
+    },
+  },
+  middleName: { type: String, maxlength: 20, trim: true },
+  lastName: {
+    type: String,
+    required: [true, 'Last name is required'],
+    trim: true,
+    maxlength: [20, "Last name can't be longer than 20 characters"],
+    validate: {
+      // using validator library - checking if lName has any other character other than a-z, A-Z
+      validator: (lName: string) => validator.isAlpha(lName),
+      message: '{VALUE} can not have digits or special characters in it',
+    },
+  },
 });
 
 const guardianSchema = new Schema<Guardian>({
-  fatherName: { type: String, required: true },
-  fatherOccupation: { type: String, required: true },
-  fatherContactNo: { type: String, required: true },
-  motherName: { type: String, required: true },
-  motherOccupation: { type: String, required: true },
-  motherContactNo: { type: String, required: true },
+  fatherName: {
+    type: String,
+    required: [true, 'Father name field is required'],
+    trim: true,
+    maxlength: [20, "Name can't be longer than 20 characters"],
+  },
+  fatherOccupation: {
+    type: String,
+    required: [true, 'Father occupation field is required'],
+    trim: true,
+    maxlength: 30,
+  },
+  fatherContactNo: {
+    type: String,
+    required: [true, 'Father contact no field is required'],
+  },
+  motherName: {
+    type: String,
+    required: [true, 'Mother name field is required'],
+    trim: true,
+    maxlength: [20, "Name can't be longer than 20 characters"],
+  },
+  motherOccupation: {
+    type: String,
+    required: [true, 'Mother occupation field is required'],
+    trim: true,
+    maxlength: 30,
+  },
+  motherContactNo: {
+    type: String,
+    required: [true, 'Mother contact no field is required'],
+  },
 });
 
 const localGuardianSchema = new Schema<LocalGuardian>({
-  name: { type: String, required: true },
-  occupation: { type: String, required: true },
-  contactNo: { type: String, required: true },
-  address: { type: String, required: true },
+  name: {
+    type: String,
+    trim: true,
+    required: [true, 'Name field is required'],
+    maxlength: [20, "Name can't be longer than 20 characters"],
+  },
+  occupation: {
+    type: String,
+    required: [true, 'Occupation field is required'],
+    trim: true,
+    maxlength: 30,
+  },
+  contactNo: { type: String, required: [true, 'Contact no field is required'] },
+  address: { type: String, required: [true, 'Address field is required'] },
 });
 
 const studentSchema = new Schema<Student>({
   id: { type: String, required: true, unique: true },
-  name: { type: userNameSchema, required: [true, 'Name is required'] },
+  name: {
+    type: nameSchema,
+    required: [true, 'Name is required'],
+    trim: true,
+    maxlength: [20, "Name can't be longer than 20 characters"],
+  },
   gender: {
     type: String,
     enum: {
@@ -43,7 +109,17 @@ const studentSchema = new Schema<Student>({
     required: [true, 'gender field is required.'],
   },
   DOB: { type: String },
-  email: { type: String, required: [true, 'Email is required'], unique: true },
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+    trim: true,
+    unique: true,
+    maxlength: 30,
+    validate: {
+      validator: (emailAdd: string) => validator.isEmail(emailAdd),
+      message: '{VALUE} is not in valid email address format',
+    },
+  },
   contactNo: { type: String, required: [true, 'Contact number is required'] },
   emergencyContactNo: {
     type: String,
