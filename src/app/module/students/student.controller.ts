@@ -1,11 +1,16 @@
 import { Request, Response } from 'express';
 import { studentServices } from './student.services';
-import studentValidationSchema from './student.validation';
+import studentValidationSchemaJoi from './student.joi.validation';
+import studentValidationSchemaZod from './student.validation';
 
 const createStudent = async (req: Request, res: Response) => {
   try {
     const student = req.body.student; // res.body returns an object of form {student: {id: ,name: ,.....}}
-    const { error, value } = studentValidationSchema.validate(student);
+
+    /*
+    // data validation using Joi
+    const { error, value } = studentValidationSchemaJoi.validate(student);
+
     if (error) {
       res.status(500).json({
         success: false,
@@ -14,6 +19,12 @@ const createStudent = async (req: Request, res: Response) => {
       });
       return;
     }
+    */
+    // data validation using Zod
+
+    // parse returns the value if the provided data is in correct format, otherwise it throws an error.
+    const value = studentValidationSchemaZod.parse(student);
+
     const result = await studentServices.createStudentIntoDb(value);
 
     res.status(200).json({

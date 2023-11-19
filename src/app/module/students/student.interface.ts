@@ -21,14 +21,14 @@ export type LocalGuardian = {
 };
 
 export type Student = {
-  id?: string;
+  id: string;
   name: UserName;
   gender: 'male' | 'female';
   DOB?: string;
   email: string;
   contactNo: string;
   emergencyContactNo: string;
-  bloodGroup: 'A+' | 'A-' | 'B+' | 'B-' | 'O+' | 'O-' | 'AB+' | 'AB-';
+  bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'O+' | 'O-' | 'AB+' | 'AB-';
   presentAddress: string;
   permanentAddress: string;
   guardian: Guardian;
