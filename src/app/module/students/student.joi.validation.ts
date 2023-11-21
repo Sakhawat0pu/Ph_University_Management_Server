@@ -51,6 +51,7 @@ const localGuardianValidationSchema = Joi.object({
 // Joi schema for student model
 const studentValidationSchemaJoi = Joi.object({
   id: Joi.string().required(),
+  password: Joi.string().required().max(20),
   name: nameValidationSchema.required(),
   gender: Joi.string().valid('male', 'female').required(),
   DOB: Joi.string(),
@@ -69,6 +70,7 @@ const studentValidationSchemaJoi = Joi.object({
     .valid('active', 'inactive')
     .default('active')
     .required(),
+  isDeleted: Joi.boolean().required(),
 });
 
 export default studentValidationSchemaJoi;

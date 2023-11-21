@@ -62,6 +62,7 @@ const localGuardianValidationSchema = z.object({
 // Zod schema for student model
 const studentValidationSchemaZod = z.object({
   id: z.string(),
+  password: z.string().max(20),
   name: nameValidationSchema.required(),
   gender: z.enum(['male', 'female']),
   DOB: z.string(),
@@ -77,6 +78,7 @@ const studentValidationSchemaZod = z.object({
   localGuardian: localGuardianValidationSchema.required(),
   profileImg: z.string().optional(),
   isActive: z.enum(['active', 'inactive']).default('active'),
+  isDeleted: z.boolean(),
 });
 
 export default studentValidationSchemaZod;
