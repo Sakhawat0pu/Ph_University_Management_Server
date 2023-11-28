@@ -126,7 +126,7 @@ const studentSchema = new Schema<Student, TStudentModel>(
       },
       required: [true, 'gender field is required.'],
     },
-    DOB: { type: String },
+    DOB: { type: Date },
     email: {
       type: String,
       required: [true, 'Email is required'],
@@ -165,6 +165,12 @@ const studentSchema = new Schema<Student, TStudentModel>(
     localGuardian: {
       type: localGuardianSchema,
       required: [true, 'Local Guardian field is required'],
+    },
+    academicSemester: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'Admission semester is required'],
+      unique: true,
+      ref: '', // Todo
     },
     profileImg: { type: String },
     // isActive: {

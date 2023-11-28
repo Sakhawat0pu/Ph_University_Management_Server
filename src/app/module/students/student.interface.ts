@@ -28,7 +28,7 @@ export type Student = {
   // password: string;
   name: UserName;
   gender: 'male' | 'female';
-  DOB?: string;
+  DOB?: Date;
   email: string;
   contactNo: string;
   emergencyContactNo: string;
@@ -37,6 +37,7 @@ export type Student = {
   permanentAddress: string;
   guardian: Guardian;
   localGuardian: LocalGuardian;
+  academicSemester: Types.ObjectId;
   profileImg?: string;
   // isActive: 'active' | 'inactive';
   isDeleted: boolean;

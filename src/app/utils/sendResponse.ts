@@ -1,5 +1,4 @@
 import { Response } from 'express';
-import httpStatus from 'http-status';
 
 type TResponse<T> = {
   statusCode: number;
