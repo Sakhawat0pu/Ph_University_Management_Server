@@ -100,10 +100,16 @@ const localGuardianSchema = new Schema<LocalGuardian>({
 const studentSchema = new Schema<Student, TStudentModel>(
   {
     id: { type: String, required: true, unique: true },
-    password: {
-      type: String,
-      required: true,
-      maxlength: [20, "Password can't be longer than 20 characters"],
+    // password: {
+    //   type: String,
+    //   required: true,
+    //   maxlength: [20, "Password can't be longer than 20 characters"],
+    // },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'User Id is required'],
+      unique: true,
+      ref: 'UserModel', // referencing user model
     },
     name: {
       type: userNameSchema,
@@ -161,16 +167,16 @@ const studentSchema = new Schema<Student, TStudentModel>(
       required: [true, 'Local Guardian field is required'],
     },
     profileImg: { type: String },
-    isActive: {
-      type: String,
-      enum: {
-        values: ['active', 'inactive'],
-        message:
-          "{VALUE} is not Supported. The following values are only supported: 'active','inActive'.",
-      },
-      default: 'active',
-      required: [true, 'isActive field is required'],
-    },
+    // isActive: {
+    //   type: String,
+    //   enum: {
+    //     values: ['active', 'inactive'],
+    //     message:
+    //       "{VALUE} is not Supported. The following values are only supported: 'active','inActive'.",
+    //   },
+    //   default: 'active',
+    //   required: [true, 'isActive field is required'],
+    // },
     isDeleted: { type: Boolean, default: false },
   },
   {
@@ -191,20 +197,20 @@ studentSchema.virtual('fullName').get(function () {
 
 // Pre 'save' middleware/hook : works on save()/create()
 
-studentSchema.pre('save', async function (next) {
+/* studentSchema.pre('save', async function (next) {
   const user = this;
   user.password = await bcrypt.hash(
     user.password,
     Number(config.bcrypt_salt_round),
   );
   next();
-});
+}); */
 
 // post 'save' middleware/hook    -- Document middleware - here this refer to current document
-studentSchema.post('save', function (doc, next) {
+/* studentSchema.post('save', function (doc, next) {
   doc.password = '';
   next();
-});
+}); */
 
 // Query middleware - this.find()  refers to current find() query
 
