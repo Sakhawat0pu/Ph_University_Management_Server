@@ -37,7 +37,8 @@ export type Student = {
   permanentAddress: string;
   guardian: Guardian;
   localGuardian: LocalGuardian;
-  academicSemester: Types.ObjectId;
+  admissionSemester: Types.ObjectId;
+  academicDepartment: Types.ObjectId;
   profileImg?: string;
   // isActive: 'active' | 'inactive';
   isDeleted: boolean;

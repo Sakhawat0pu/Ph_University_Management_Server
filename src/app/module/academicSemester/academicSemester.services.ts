@@ -2,10 +2,13 @@ import { Types } from 'mongoose';
 import { SemesterNameCodeMapper } from './academicSemester.constants';
 import { TAcademicSemester } from './academicSemester.interface';
 import { AcademicSemesterModel } from './academicSemester.model';
+import AppError from '../../errors/AppError';
+import httpStatus from 'http-status';
 
 const createAcademicSemesterIntoDb = async (payLoad: TAcademicSemester) => {
   if (SemesterNameCodeMapper[payLoad.name] !== payLoad.code) {
-    throw new Error(
+    throw new AppError(
+      httpStatus.NOT_FOUND,
       `Invalid semester code. Code for ${payLoad.name} semester is ${
         SemesterNameCodeMapper[payLoad.name]
       }`,
@@ -33,7 +36,7 @@ const updateAcademicSemesterIntoDb = async (
 ) => {
   const filter = { _id: new Types.ObjectId(id) };
   if (!(await AcademicSemesterModel.findOne(filter))) {
-    throw new Error(`Semester with ${id} not found`);
+    throw new AppError(httpStatus.NOT_FOUND, `Semester with ${id} not found`);
   }
   const result = await AcademicSemesterModel.findOneAndUpdate(
     filter,

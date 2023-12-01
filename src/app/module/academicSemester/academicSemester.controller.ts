@@ -2,6 +2,7 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { academicSemesterServices } from './academicSemester.services';
+import AppError from '../../errors/AppError';
 
 const createAcademicSemester = catchAsync(async (req, res) => {
   const data = await academicSemesterServices.createAcademicSemesterIntoDb(
@@ -20,7 +21,7 @@ const getAcademicSemesters = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Academic semesters have been retrieved successfully',
+    message: 'Academic semesters are retrieved successfully',
     data: result,
   });
 });
@@ -32,7 +33,7 @@ const getSingleAcademicSemester = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Academic semester has been retrieved successfully',
+    message: 'Academic semester is retrieved successfully',
     data: result,
   });
 });
@@ -42,7 +43,7 @@ const updateAcademicSemester = catchAsync(async (req, res) => {
   const updatedDoc = req.body;
   if (updatedDoc.name || updatedDoc.year || updatedDoc.code) {
     if (!updatedDoc.name || !updatedDoc.year || !updatedDoc.code) {
-      throw new Error('Must include name, year, code');
+      throw new AppError(500, 'Must include name, year, code');
     }
   }
   const result = await academicSemesterServices.updateAcademicSemesterIntoDb(
@@ -53,7 +54,7 @@ const updateAcademicSemester = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Academic semester has been updated successfully',
+    message: 'Academic semester is updated successfully',
     data: result,
   });
 });

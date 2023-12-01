@@ -11,6 +11,9 @@ import {
 import bcrypt from 'bcrypt';
 import config from '../../config';
 import { boolean } from 'joi';
+import { UserModel } from '../users/users.model';
+import { AcademicSemesterModel } from '../academicSemester/academicSemester.model';
+import { AcademicDepartmentModel } from '../academicDepartment/academicDepartment.model';
 
 // Create Schema
 
@@ -109,7 +112,7 @@ const studentSchema = new Schema<Student, TStudentModel>(
       type: Schema.Types.ObjectId,
       required: [true, 'User Id is required'],
       unique: true,
-      ref: 'UserModel', // referencing user model
+      ref: UserModel, // referencing user model
     },
     name: {
       type: userNameSchema,
@@ -166,11 +169,15 @@ const studentSchema = new Schema<Student, TStudentModel>(
       type: localGuardianSchema,
       required: [true, 'Local Guardian field is required'],
     },
-    academicSemester: {
+    admissionSemester: {
       type: Schema.Types.ObjectId,
-      required: [true, 'Admission semester is required'],
-      unique: true,
-      ref: '', // Todo
+      required: [true, 'Admission semester Id is required'],
+      ref: AcademicSemesterModel, // Todo
+    },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'Academic Faculty Id is required'],
+      ref: AcademicDepartmentModel,
     },
     profileImg: { type: String },
     // isActive: {
@@ -232,13 +239,13 @@ studentSchema.pre('findOne', function (next) {
 });
 
 // Aggregate middleware
-
+/*
 studentSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } }); // this.pipeline() returns the current
   // pipeline of aggregate function
   next();
 });
-
+*/
 /*
 ** Using methods
 

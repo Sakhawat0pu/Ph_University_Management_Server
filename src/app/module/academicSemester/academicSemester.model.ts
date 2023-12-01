@@ -6,6 +6,8 @@ import {
   Months,
   SemesterNameCodeMapper,
 } from './academicSemester.constants';
+import AppError from '../../errors/AppError';
+import httpStatus from 'http-status';
 
 const academicSemesterSchema = new Schema<TAcademicSemester>(
   {
@@ -43,7 +45,7 @@ academicSemesterSchema.pre('save', async function (next) {
   });
 
   if (isSemesterExists) {
-    throw new Error('Semester already exists');
+    throw new AppError(500, 'Semester already exists');
   }
   next();
 });
@@ -57,18 +59,21 @@ academicSemesterSchema.pre('findOneAndUpdate', async function (next) {
       year: update.year,
     });
     if (isSemesterExists) {
-      throw new Error('Semester already exists');
+      throw new AppError(500, 'Semester already exists');
     }
   }
 
-  if (update.name && update.code) {
-    if (SemesterNameCodeMapper[update.name] !== update.code) {
-      throw new Error(
-        `Invalid semester code. Code for ${update.name} semester is ${
-          SemesterNameCodeMapper[update.name]
-        }`,
-      );
-    }
+  if (
+    update.name &&
+    update.code &&
+    SemesterNameCodeMapper[update.name] !== update.code
+  ) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      `Invalid semester code. Code for ${update.name} semester is ${
+        SemesterNameCodeMapper[update.name]
+      }`,
+    );
   }
   next();
 });

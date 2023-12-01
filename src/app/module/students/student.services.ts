@@ -24,21 +24,27 @@ import { StudentModel } from './student.model';
 // };
 
 const getStudentFromDb = async () => {
-  const result = await StudentModel.find(); // built-in static method
+  const result = await StudentModel.find() // built-in static method
+    .populate('user')
+    .populate('admissionSemester')
+    .populate({
+      path: 'academicDepartment',
+      populate: {
+        path: 'academicFaculty',
+      },
+    });
   return result;
 };
 
-/*
 const getSingeStudentFromDb = async (id: string) => {
   const result = await StudentModel.findOne({ id }); // built-in static method
   return result;
 };
-*/
 
-const getSingeStudentFromDb = async (id: string) => {
+/* const getSingeStudentFromDb = async (id: string) => {
   const result = await StudentModel.aggregate([{ $match: { id: id } }]); // built-in static method
   return result;
-};
+}; */
 
 const deleteSingleStudentFromDb = async (id: string) => {
   const result = await StudentModel.updateOne({ id }, { isDeleted: true });
