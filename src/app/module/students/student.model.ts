@@ -14,6 +14,8 @@ import { boolean } from 'joi';
 import { UserModel } from '../users/users.model';
 import { AcademicSemesterModel } from '../academicSemester/academicSemester.model';
 import { AcademicDepartmentModel } from '../academicDepartment/academicDepartment.model';
+import AppError from '../../errors/AppError';
+import httpStatus from 'http-status';
 
 // Create Schema
 
@@ -235,6 +237,18 @@ studentSchema.pre('find', function (next) {
 
 studentSchema.pre('findOne', function (next) {
   this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+studentSchema.pre('findOneAndUpdate', async function (next) {
+  const query = this.getQuery();
+  const student = await StudentModel.findOne(query);
+  if (!student) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'Student with the provided ID does not exists!',
+    );
+  }
   next();
 });
 

@@ -84,6 +84,92 @@ const createStudentValidationSchema = z.object({
   }),
 });
 
+const updateNameValidationSchema = z.object({
+  firstName: z
+    .string()
+    .min(1)
+    .max(20)
+    .refine((data) => /^[A-Z][a-z]*$/.test(data), {
+      message:
+        'First name must start with an uppercase letter followed by lowercase letters',
+    })
+    .optional(),
+  middleName: z.string().max(20).optional(),
+  lastName: z
+    .string()
+    .min(1)
+    .max(20)
+    .refine((data) => /^[A-Z][a-z]*$/.test(data), {
+      message:
+        'Last name must start with an uppercase letter followed by lowercase letters',
+    })
+    .optional(),
+});
+
+// Zod schema for guardian field
+const updateGuardianValidationSchema = z.object({
+  fatherName: z
+    .string()
+    .min(1)
+    .max(20)
+    .refine((data) => /^[A-Z][a-z]*(\s[A-Z][a-z]*)*$/.test(data), {
+      message: 'Father name must follow the specified format',
+    })
+    .optional(),
+  fatherOccupation: z.string().max(30).optional(),
+  fatherContactNo: z.string().optional(),
+  motherName: z
+    .string()
+    .min(1)
+    .max(20)
+    .refine((data) => /^[A-Z][a-z]*(\s[A-Z][a-z]*)*$/.test(data), {
+      message:
+        'Mother name must start with an uppercase letter followed by lowercase letters',
+    })
+    .optional(),
+  motherOccupation: z.string().max(30).optional(),
+  motherContactNo: z.string().optional(),
+});
+
+const updateLocalGuardianValidationSchema = z.object({
+  name: z
+    .string()
+    .min(1)
+    .max(20)
+    .refine((data) => /^[A-Z][a-z]*(\s[A-Z][a-z]*)*$/.test(data), {
+      message:
+        'Local guardian name must start with an uppercase letter followed by lowercase letters',
+    })
+    .optional(),
+  occupation: z.string().max(30).optional(),
+  contactNo: z.string().optional(),
+  address: z.string().optional(),
+});
+
+const updateStudentValidationSchema = z.object({
+  body: z.object({
+    student: z.object({
+      name: updateNameValidationSchema.optional(),
+      gender: z.enum(['male', 'female']).optional(),
+      DOB: z.string().optional(),
+      email: z.string().email().optional(),
+      contactNo: z.string().optional(),
+      emergencyContactNo: z.string().optional(),
+      bloodGroup: z
+        .enum(['A+', 'A-', 'B+', 'B-', 'O+', 'B-', 'AB+', 'AB-'])
+        .optional(),
+      presentAddress: z.string().optional(),
+      permanentAddress: z.string().optional(),
+      guardian: updateGuardianValidationSchema.required().optional(),
+      localGuardian: updateLocalGuardianValidationSchema.optional(),
+      admissionSemester: z.string().optional(),
+      academicDepartment: z.string().optional(),
+      profileImg: z.string().optional(),
+    }),
+  }),
+});
+
 export const studentValidations = {
   createStudentValidationSchema,
+  updateStudentValidationSchema,
 };

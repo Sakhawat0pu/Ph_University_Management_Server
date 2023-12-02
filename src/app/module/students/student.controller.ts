@@ -63,44 +63,46 @@ const getStudent = catchAsync(
   },
 );
 
-const getSingleStudent = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const studentId = req.params.studentId;
-      const result = await studentServices.getSingeStudentFromDb(studentId);
-      sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'Student has been retrieved',
-        data: result,
-      });
-    } catch (err) {
-      next(err);
-    }
-  },
-);
+const getSingleStudent = catchAsync(async (req: Request, res: Response) => {
+  const studentId = req.params.studentId;
+  const result = await studentServices.getSingeStudentFromDb(studentId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Student has been retrieved',
+    data: result,
+  });
+});
 
-const deleteSingleStudent = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const id = req.params.studentId;
-      const result = await studentServices.deleteSingleStudentFromDb(id);
+const updateStudent = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.studentId;
+  const student = req.body.student;
+  const result = await studentServices.updateStudentIntoDb(id, student);
 
-      sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'Student has been deleted successfully',
-        data: result,
-      });
-    } catch (err) {
-      next(err);
-    }
-  },
-);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Student has been updated successfully',
+    data: result,
+  });
+});
+
+const deleteSingleStudent = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.studentId;
+  const result = await studentServices.deleteSingleStudentFromDb(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Student has been deleted successfully',
+    data: result,
+  });
+});
 
 export const studentController = {
   // createStudent,
   getStudent,
   getSingleStudent,
+  updateStudent,
   deleteSingleStudent,
 };
