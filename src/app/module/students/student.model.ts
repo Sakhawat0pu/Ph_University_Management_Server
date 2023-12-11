@@ -8,9 +8,6 @@ import {
   TStudentModel,
   UserName,
 } from './student.interface';
-import bcrypt from 'bcrypt';
-import config from '../../config';
-import { boolean } from 'joi';
 import { UserModel } from '../users/users.model';
 import { AcademicSemesterModel } from '../academicSemester/academicSemester.model';
 import { AcademicDepartmentModel } from '../academicDepartment/academicDepartment.model';
@@ -205,9 +202,8 @@ const studentSchema = new Schema<Student, TStudentModel>(
 // it value is constructed from the value of existing field in the database
 // this refers to the current document
 studentSchema.virtual('fullName').get(function () {
-  return `${this.name.firstName} ${this.name.middleName ?? ''} ${
-    this.name.lastName
-  }`;
+  return `${this.name?.firstName} ${this.name?.middleName ?? ''} ${this.name
+    ?.lastName}`;
 });
 
 // Pre 'save' middleware/hook : works on save()/create()
@@ -235,8 +231,8 @@ studentSchema.pre('find', function (next) {
   next();
 });
 
-studentSchema.pre('findOne', function (next) {
-  this.find({ isDeleted: { $ne: true } });
+studentSchema.pre('findOne', async function (next) {
+  this.findOne({ isDeleted: { $ne: true } });
   next();
 });
 

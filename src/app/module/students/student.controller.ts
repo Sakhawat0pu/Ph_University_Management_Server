@@ -48,7 +48,8 @@ const createStudent = async (req: Request, res: Response) => {
 
 const getStudent = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await studentServices.getStudentFromDb();
+    const query = req.query;
+    const result = await studentServices.getStudentFromDb(query);
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,

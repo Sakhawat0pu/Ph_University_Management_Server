@@ -28,6 +28,40 @@ const createStudent = catchAsync(
   },
 );
 
+const createFaculty = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const faculty = req.body.faculty;
+    const password = req.body.password;
+
+    const result = await userServices.createFacultyIntoDB(password, faculty);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Faculty has been successfully created',
+      data: result,
+    });
+  },
+);
+
+const createAdmin = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const admin = req.body.admin;
+    const password = req.body.password;
+
+    const result = await userServices.createAdminIntoDB(password, admin);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Admin has been successfully created',
+      data: result,
+    });
+  },
+);
+
 export const userControllers = {
   createStudent,
+  createFaculty,
+  createAdmin,
 };
