@@ -3,7 +3,7 @@ import { BloodGroup, Gender } from './admin.constants';
 
 const createUserNameValidationSchema = z.object({
   firstName: z.string().min(1).max(20),
-  middleName: z.string().max(20),
+  middleName: z.string().max(20).optional(),
   lastName: z.string().max(20),
 });
 
@@ -18,7 +18,7 @@ export const createAdminValidationSchema = z.object({
       email: z.string().email(),
       contactNo: z.string(),
       emergencyContactNo: z.string(),
-      bloogGroup: z.enum([...BloodGroup] as [string, ...string[]]),
+      bloodGroup: z.enum([...BloodGroup] as [string, ...string[]]),
       presentAddress: z.string(),
       permanentAddress: z.string(),
       profileImg: z.string(),
@@ -42,7 +42,7 @@ export const updateAdminValidationSchema = z.object({
       email: z.string().email().optional(),
       contactNo: z.string().optional(),
       emergencyContactNo: z.string().optional(),
-      bloogGroup: z.enum([...BloodGroup] as [string, ...string[]]).optional(),
+      bloodGroup: z.enum([...BloodGroup] as [string, ...string[]]).optional(),
       presentAddress: z.string().optional(),
       permanentAddress: z.string().optional(),
       profileImg: z.string().optional(),
