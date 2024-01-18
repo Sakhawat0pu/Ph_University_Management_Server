@@ -6,6 +6,7 @@ import config from '../../config';
 const userSchema = new Schema<TUser, TUserModel>(
   {
     id: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
     password: { type: String, required: true, select: 0 }, // set select to 0 to omit it from being sent to the response. Also, this will exclude password field from all types of find operation. To add this field into find operations use .select('+password)
     needsPasswordChange: { type: Boolean, default: true }, // When a user will be created, a temporary password will be given
     //-----------------------------------------------------// they need to change the password later
@@ -39,7 +40,7 @@ userSchema.statics.isPasswordMatched = async function (
 
 userSchema.statics.isJwtIssuedBeforePasswordChange = function (
   passwordChangedAtTimestamp: Date,
-  jwtIssuedAtTimestamp,
+  jwtIssuedAtTimestamp: number,
 ) {
   const passwordChangedAtTime =
     new Date(passwordChangedAtTimestamp).getTime() / 1000;

@@ -6,6 +6,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../../config';
 import bcrypt from 'bcrypt';
 import { createToken } from './auth.utils';
+import { sendEmail } from '../../utils/sendEmail';
 
 const loginUser = async (payLoad: TLoginUser) => {
   const user = await UserModel.isUserExists(payLoad?.id);
@@ -161,8 +162,97 @@ const refreshToken = async (token: string) => {
   return { accessToken };
 };
 
+const forgetPassword = async (id: string) => {
+  const user = await UserModel.isUserExists(id);
+  if (!user) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'Specified user does not exist in the database',
+    );
+  }
+
+  if (user?.isDeleted) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'Specified user has been deleted from the database',
+    );
+  }
+
+  if (user?.status === 'blocked') {
+    throw new AppError(httpStatus.FORBIDDEN, 'Specified user has been blocked');
+  }
+
+  const jwtPayLoad = {
+    userId: user.id,
+    role: user.role,
+  };
+
+  const resetToken = createToken(
+    jwtPayLoad,
+    config.jwt_access_secret as string,
+    '10m',
+  );
+
+  const resetLink = `${config.front_end_base_uri}/reset-password?id=${id}&token=${resetToken}`;
+  console.log(resetLink);
+  sendEmail(user.email, resetLink);
+  return null;
+};
+
+const resetPassword = async (
+  payLoad: { id: string; newPassword: string },
+  token: string,
+) => {
+  const user = await UserModel.isUserExists(payLoad?.id);
+  if (!user) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'Specified user does not exist in the database',
+    );
+  }
+
+  if (user?.isDeleted) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'Specified user has been deleted from the database',
+    );
+  }
+
+  if (user?.status === 'blocked') {
+    throw new AppError(httpStatus.FORBIDDEN, 'Specified user has been blocked');
+  }
+
+  const decoded = jwt.verify(
+    token,
+    config.jwt_access_secret as string,
+  ) as JwtPayload;
+
+  if (decoded?.userId !== payLoad.id) {
+    throw new AppError(httpStatus.FORBIDDEN, 'Forbidden to reset password');
+  }
+
+  const newHashedPassword = await bcrypt.hash(
+    payLoad?.newPassword,
+    Number(config.bcrypt_salt_round),
+  );
+
+  await UserModel.findOneAndUpdate(
+    { id: decoded?.userId, role: decoded?.role },
+    {
+      password: newHashedPassword,
+      needsPasswordChange: false,
+      passwordChangedAt: new Date(),
+    },
+    { runValidators: true },
+  );
+
+  return null;
+};
+
 export const authServices = {
   loginUser,
   changePassword,
   refreshToken,
+  forgetPassword,
+  resetPassword,
 };
