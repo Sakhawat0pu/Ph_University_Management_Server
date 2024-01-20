@@ -7,6 +7,7 @@ import handleCastError from '../errors/handleCastError';
 import handleDuplicateError from '../errors/handleDuplicateError';
 import AppError from '../errors/AppError';
 import handleValidationError from '../errors/handleValidationError';
+import httpStatus from 'http-status';
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   let statusCode = 500;
@@ -38,6 +39,15 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
     errorSources = simplifiedError.errorSources;
+  } else if (err.name === 'TokenExpiredError') {
+    statusCode = httpStatus.UNAUTHORIZED;
+    message = 'Unauthorized User';
+    errorSources = [
+      {
+        path: '',
+        message: message,
+      },
+    ];
   } else if (err instanceof AppError) {
     statusCode = err?.statusCode;
     message = err?.message;
