@@ -30,4 +30,11 @@ router.get(
   auth(UserRole.admin, UserRole.superAdmin),
   enrolledCourseController.getAllEnrolledCourses,
 );
+
+router.get(
+  '/my-enrolled-courses',
+  auth(UserRole.student),
+  enrolledCourseController.getMyEnrolledCourses,
+);
+
 export const enrolledCourseRouter = router;

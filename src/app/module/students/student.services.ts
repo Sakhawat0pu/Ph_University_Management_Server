@@ -73,12 +73,14 @@ const getStudentFromDb = async (query: Record<string, unknown>) => {
     StudentModel.find()
       .populate('user')
       .populate('admissionSemester')
-      .populate({
-        path: 'academicDepartment',
-        populate: {
-          path: 'academicFaculty',
-        },
-      }),
+      // .populate({                    // before academicFaculty was available only after the academicDepartment
+      //   path: 'academicDepartment',  // was populated, but, now we added a academicFaculty field in the student
+      //   populate: {                  // collection
+      //     path: 'academicFaculty',
+      //   },
+      // }),
+      .populate('academicDepartment')
+      .populate('academicFaculty'),
     query,
   )
     .search(searchFields)
@@ -86,9 +88,9 @@ const getStudentFromDb = async (query: Record<string, unknown>) => {
     .sort()
     .paginate()
     .selectFields();
-  const result = await returnedQuery.modelQuery;
+  const data = await returnedQuery.modelQuery;
   const meta = await returnedQuery.countTotal();
-  return { result, meta };
+  return { data, meta };
 };
 
 const getSingeStudentFromDb = async (id: string) => {

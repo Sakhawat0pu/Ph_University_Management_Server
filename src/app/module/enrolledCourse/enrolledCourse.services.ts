@@ -9,6 +9,7 @@ import { CourseModel } from '../course/course.model';
 import { SemesterRegistrationModel } from '../semesterRegistration/semesterReg.model';
 import { FacultyModel } from '../faculty/faculty.model';
 import { calculateGradeAndGradePoint } from './enrolledCourse.utils';
+import QueryBuilder from '../builder/QueryBuilder';
 
 const createEnrolledCourseIntoDb = async (
   id: string,
@@ -232,8 +233,34 @@ const getAllEnrolledCoursesFromDb = async () => {
   return result;
 };
 
+const getMyEnrolledCoursesFromDb = async (
+  studentId: string,
+  query: Record<string, unknown>,
+) => {
+  const student = await StudentModel.findOne({ id: studentId });
+  if (!student) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Specified student not found');
+  }
+
+  const myEnrolledCoursesQuery = new QueryBuilder(
+    EnrolledCourseModel.find({ student: student._id }).populate(
+      'semesterRegistration academicSemester academicFaculty academicDepartment offeredCourse course student faculty',
+    ),
+    query,
+  );
+
+  const data = await myEnrolledCoursesQuery.modelQuery;
+  const meta = await myEnrolledCoursesQuery.countTotal();
+
+  return {
+    meta,
+    data,
+  };
+};
+
 export const enrolledCourseServices = {
   createEnrolledCourseIntoDb,
   updateEnrolledCourseMarksIntoDb,
   getAllEnrolledCoursesFromDb,
+  getMyEnrolledCoursesFromDb,
 };

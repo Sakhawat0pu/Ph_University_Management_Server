@@ -191,13 +191,16 @@ const getAllOfferedCourseFromDb = async (query: Record<string, unknown>) => {
     .sort()
     .paginate()
     .selectFields();
-  const result = await offeredCourseQuery.modelQuery;
+  const data = await offeredCourseQuery.modelQuery;
   const meta = await offeredCourseQuery.countTotal();
 
-  return { meta, result };
+  return { meta, data };
 };
 
-const getMyOfferedCoursesFromDb = async (id: string) => {
+const getMyOfferedCoursesFromDb = async (
+  id: string,
+  query: Record<string, unknown>,
+) => {
   const student = await StudentModel.findOne({ id });
   if (!student) {
     throw new AppError(httpStatus.NOT_FOUND, 'Specified student not found');
@@ -211,7 +214,11 @@ const getMyOfferedCoursesFromDb = async (id: string) => {
     throw new AppError(httpStatus.NOT_FOUND, 'There is no ongoing semester');
   }
 
-  const offeredCourses = await OfferedCourseModel.aggregate([
+  const page = Number(query?.page) || 1;
+  const limit = Number(query?.limit) || 100;
+  const skip = (page - 1) * limit;
+
+  const aggregationQuery = [
     {
       $match: {
         semesterRegistration: currentOngoingRegisteredSemester._id,
@@ -324,8 +331,35 @@ const getMyOfferedCoursesFromDb = async (id: string) => {
         isPrerequisiteSatisfied: true,
       },
     },
+  ];
+
+  const paginationQuery = [
+    {
+      $skip: skip,
+    },
+    {
+      $limit: limit,
+    },
+  ];
+
+  const totalDocuments = (await OfferedCourseModel.aggregate(aggregationQuery))
+    .length;
+  const offeredCourses = await OfferedCourseModel.aggregate([
+    ...aggregationQuery,
+    ...paginationQuery,
   ]);
-  return offeredCourses;
+
+  const totalPage = Math.ceil(totalDocuments / limit);
+  const meta = {
+    limit,
+    page,
+    totalDocuments,
+    totalPage,
+  };
+  return {
+    meta,
+    offeredCourses,
+  };
 };
 
 const getSingleOfferedCourseFromDb = async (id: string) => {
