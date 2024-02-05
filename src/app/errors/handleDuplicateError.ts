@@ -1,3 +1,4 @@
+import httpStatus from 'http-status';
 import { TErrorSources, TGenericErrorResponse } from '../interface/error';
 
 const handleDuplicateError = (err: any): TGenericErrorResponse => {
@@ -11,7 +12,7 @@ const handleDuplicateError = (err: any): TGenericErrorResponse => {
   ];
 
   return {
-    statusCode: 400,
+    statusCode: httpStatus.BAD_REQUEST,
     message: 'Duplicate Field error',
     errorSources,
   };

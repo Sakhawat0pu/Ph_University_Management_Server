@@ -13,6 +13,7 @@ import { AcademicSemesterModel } from '../academicSemester/academicSemester.mode
 import { AcademicDepartmentModel } from '../academicDepartment/academicDepartment.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
+import { AcademicFacultyModel } from '../academicFaculty/academicFaculty.model';
 
 // Create Schema
 
@@ -175,10 +176,15 @@ const studentSchema = new Schema<Student, TStudentModel>(
     },
     academicDepartment: {
       type: Schema.Types.ObjectId,
-      required: [true, 'Academic Faculty Id is required'],
+      required: [true, 'Academic Department Id is required'],
       ref: AcademicDepartmentModel,
     },
-    profileImg: { type: String },
+    academicFaculty: {
+      type: Schema.Types.ObjectId,
+      ref: AcademicFacultyModel,
+      required: [true, 'Academic Faculty Id is required'],
+    },
+    profileImg: { type: String, default: '' },
     // isActive: {
     //   type: String,
     //   enum: {

@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.post(
   '/create-student',
-  auth(UserRole.admin),
+  auth(UserRole.superAdmin, UserRole.admin),
   upload.single('imgFile'), // the name of the file 'imgFile' - comes from the name of the key whose value is the img file
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);
@@ -25,7 +25,7 @@ router.post(
 
 router.post(
   '/create-faculty',
-  auth(UserRole.admin),
+  auth(UserRole.superAdmin, UserRole.admin),
   upload.single('imgFile'),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);
@@ -37,6 +37,7 @@ router.post(
 
 router.post(
   '/create-admin',
+  auth(UserRole.superAdmin, UserRole.admin),
   upload.single('imgFile'),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);
@@ -48,13 +49,13 @@ router.post(
 
 router.get(
   '/me',
-  auth(UserRole.admin, UserRole.faculty, UserRole.student),
+  auth(UserRole.superAdmin, UserRole.admin, UserRole.faculty, UserRole.student),
   userControllers.getMe,
 );
 
 router.post(
   '/change-status/:userId',
-  auth(UserRole.admin),
+  auth(UserRole.superAdmin, UserRole.admin),
   validateRequest(userSchemaValidation.changeUserStatusValidationSchema),
   userControllers.changeStatus,
 );

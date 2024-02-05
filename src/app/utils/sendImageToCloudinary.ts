@@ -9,7 +9,10 @@ cloudinary.config({
   api_secret: config.cloudinary_api_secret,
 });
 
-export const sendImageToCloudinary = async (fileName: string, path: string) => {
+export const sendImageToCloudinary = async (
+  fileName: string,
+  path: string,
+): Promise<Record<string, unknown>> => {
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload(
       path,
@@ -18,7 +21,7 @@ export const sendImageToCloudinary = async (fileName: string, path: string) => {
         if (error) {
           reject(error);
         }
-        resolve(result);
+        resolve(result!);
         fs.unlink(path, (err) => {
           if (err) {
             reject(err);

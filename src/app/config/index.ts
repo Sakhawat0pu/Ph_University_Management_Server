@@ -13,6 +13,7 @@ export default {
   jwt_refresh_secret: process.env.JWT_REFRESH_SECRET,
   jwt_access_token_expires_in: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN,
   jwt_refresh_token_expires_in: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN,
+  super_admin_password: process.env.SUPER_ADMIN_PASSWORD,
   front_end_base_uri: process.env.FRONT_END_BASE_URI,
   reset_password_uri_link: process.env.RESET_PASSWORD_URI_LINK,
   cloudinary_cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

@@ -3,6 +3,7 @@ import { BloodGroup, Gender } from './faculty.constants';
 import { IFaculty, TFaculty, TUserName } from './faculty.interface';
 import { UserModel } from '../users/users.model';
 import { AcademicDepartmentModel } from '../academicDepartment/academicDepartment.model';
+import { AcademicFacultyModel } from '../academicFaculty/academicFaculty.model';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -78,11 +79,16 @@ const facultySchema = new Schema<TFaculty, IFaculty>(
       type: String,
       required: [true, 'Permanent address is required'],
     },
-    profileImg: { type: String },
+    profileImg: { type: String, default: '' },
     academicDepartment: {
       type: Schema.Types.ObjectId,
       required: [true, 'Academic Department id is required'],
       ref: AcademicDepartmentModel,
+    },
+    academicFaculty: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'Academic Faculty id is required'],
+      ref: AcademicFacultyModel,
     },
     isDeleted: {
       type: Boolean,

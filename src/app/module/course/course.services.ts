@@ -22,7 +22,11 @@ const getAllCoursesFromDb = async (query: Record<string, unknown>) => {
     .paginate()
     .selectFields();
   const result = await courseQuery.modelQuery;
-  return result;
+  const meta = await courseQuery.countTotal();
+  return {
+    meta,
+    result,
+  };
 };
 
 const getSingleCourseFromDb = async (id: string) => {
@@ -142,6 +146,13 @@ const removeFacultyFromCourseFromDb = async (
   return result;
 };
 
+const getFacultiesForACourseFromDb = async (id: string) => {
+  const result = await CourseFacultyModel.findOne({ course: id }).populate(
+    'faculties',
+  );
+  return result;
+};
+
 export const courseServices = {
   createCourseIntoDb,
   getAllCoursesFromDb,
@@ -150,4 +161,5 @@ export const courseServices = {
   updateCourseIntoDb,
   assignFacultyToCourseIntoDb,
   removeFacultyFromCourseFromDb,
+  getFacultiesForACourseFromDb,
 };

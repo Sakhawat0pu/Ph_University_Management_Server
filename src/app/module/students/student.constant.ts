@@ -1,1 +1,6 @@
-export const searchFields = ['permanentAddress', 'name.firstName', 'email'];
+export const searchFields = [
+  'permanentAddress',
+  'name.firstName',
+  'name.lastName',
+  'email',
+];
