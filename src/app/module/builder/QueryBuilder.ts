@@ -31,8 +31,7 @@ class QueryBuilder<T> {
   }
 
   sort() {
-    const sort =
-      (this?.query?.sort as string)?.split(',').join(' ') || '-createdAt'; // here '-' in front for createdAt means descending order
+    const sort = (this?.query?.sort as string)?.split(',').join(' ') || 'id'; // here '-' in front for createdAt means descending order
     this.modelQuery = this.modelQuery.sort(sort);
     return this;
   }

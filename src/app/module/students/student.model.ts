@@ -172,7 +172,7 @@ const studentSchema = new Schema<Student, TStudentModel>(
     admissionSemester: {
       type: Schema.Types.ObjectId,
       required: [true, 'Admission semester Id is required'],
-      ref: AcademicSemesterModel, // Todo
+      ref: AcademicSemesterModel,
     },
     academicDepartment: {
       type: Schema.Types.ObjectId,

@@ -4,6 +4,7 @@ import { TAcademicSemester } from './academicSemester.interface';
 import { AcademicSemesterModel } from './academicSemester.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
+import QueryBuilder from '../builder/QueryBuilder';
 
 const createAcademicSemesterIntoDb = async (payLoad: TAcademicSemester) => {
   if (SemesterNameCodeMapper[payLoad.name] !== payLoad.code) {
@@ -19,9 +20,15 @@ const createAcademicSemesterIntoDb = async (payLoad: TAcademicSemester) => {
   return result;
 };
 
-const getAcademicSemestersFromDb = async () => {
-  const result = await AcademicSemesterModel.find();
-  return result;
+const getAcademicSemestersFromDb = async (query: Record<string, unknown>) => {
+  const semesterQuery = new QueryBuilder(AcademicSemesterModel.find(), query)
+    .filter()
+    .paginate()
+    .sort()
+    .selectFields();
+  const semesters = await semesterQuery.modelQuery;
+  const meta = await semesterQuery.countTotal();
+  return { meta, semesters };
 };
 
 const getSingleAcademicSemesterFromDb = async (id: string) => {

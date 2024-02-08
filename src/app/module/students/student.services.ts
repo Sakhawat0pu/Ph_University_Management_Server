@@ -94,7 +94,10 @@ const getStudentFromDb = async (query: Record<string, unknown>) => {
 };
 
 const getSingeStudentFromDb = async (id: string) => {
-  const result = await StudentModel.findById(id); // built-in static method
+  const result = await StudentModel.findById(id).populate(
+    'academicDepartment academicFaculty admissionSemester user',
+  );
+
   if (!result) {
     throw new AppError(
       httpStatus.NOT_FOUND,
